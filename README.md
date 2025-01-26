@@ -6,6 +6,11 @@ przeżywanych uczuć i na tej podstawie zaprojektowanie i wykonanie prototypu sy
 wykrywania emocji.
 
 ## Badanie
+Jednym z kluczowych problemów w badaniach nad emocjami jest tzw. reaktywność, czyli
+zmiana zachowania osoby badanej na skutek świadomości bycia obserwowaną. Żeby zaradzić temu problemowi została zrobiona triangulacja danych, czyli korzystanie z wielu źródeł informacji.
+W badaniu zostały nagrane 3 modalności – ścieżka wzrokowa, mimika i puls. Dodatkowo
+badani opiszą swoje uczucia w ankiecie.
+
 Podczas badania nagrywano reakcje uczestników na bodźce za pomocą kamery, pulsomierza i eye-trackera.
 Bazą bodźców była baza obrazów NAPS.
 Po wstępnych przygotowaniach na monitorze przed badanym wyświetlała się seria obrazów
@@ -43,3 +48,12 @@ kontrolowany.
 <p align="center">
 <img src=".\images\ankieta SAM.png" alt="SAM" width="260px" height="260px">
 </p>
+
+## Baza obrazów
+
+
+## Obróbka danych
+
+## Architektura sieci
+
+## Pliki
