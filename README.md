@@ -38,21 +38,56 @@ W ankiecie badani byli proszeni, żeby podali słownie emocje, jakie odczuwają 
 
 Ankieta SAM (ang. Self-assesment manikin) opiera się na założeniu, że emocje można
 opisać za pomocą trzech dziewięciostopniowych skal:
+
 • skali wartościowości – czy badany odczuwa negatywne czy pozytywne uczucia,
-
+<p align="center">
+<img src=".\images\wartościowość.JPG" alt="wartosciowosc">
+</p>
 • skali pobudzenia – czy badany jest spokojny czy pobudzony,
-
+<p align="center">
+<img src=".\images\pobudzenie.JPG" alt="pobudzenie">
+</p>
 • skali dominacji – czy badany w pełni kontroluje daną emocję, czy jest przez nią
 kontrolowany.
-
 <p align="center">
-<img src=".\images\ankieta SAM.png" alt="SAM" width="260px" height="260px">
+<img src=".\images\dominacja.JPG" alt="dominacja">
 </p>
 
 ## Baza obrazów
+W badaniu została użyta baza NAPS (ang. Nencki Affective Picture System). Jest to baza danych składająca się z 1356 obrazów wywołujących emocje oraz ich średnie
+wyniki wartościowości, pobudzenia i dominacji. Każdy obraz jest podzielony na 5 kategorii:
+ludzie, twarze, krajobrazy, zwierzęta, przedmioty. Dodatkowo spośród wszystkich zdjęć
+wybrano 510 i zbadano jakie, z sześciu podstawowych, wywołują emocje.
+
+<p align="center">
+<img src=".\images\diagramy-stanowisko pomiarowe.drawio.png" alt="NAPS">
+</p>
+
+Spośród ww. 510 zdjęć zostały wybrane dwa zestawy obrazów o najbardziej
+zróżnicowanych wynikach według ankiety SAM. Pierwszy zawiera 20 obrazów,
+drugi 30. W mniejszym ułożono zdjęcia pod względem wartościowości
+w kolejności rosnącej i wybrano 5 obrazów równooddalonych od siebie. Powtórzono czynność
+dla pobudzenia i dominacji. Pozostałe obrazy dobrano tak, aby w zestawie znajdowały się
+obrazy wywołujące każdą z sześciu podstawowych emocji. Większy zbiór został wybrany
+analogicznie, tylko zamiast dla 5, to dla 7 równooddalonych od siebie obrazów.
+
+## Format surowych danych
+### Mimika
+Każdemu filmowi z nagraniem mimiki była przyporządkowana tabela w pliku CSV, która
+w każdym wierszu zapisywała numer klatki i odpowiadający jej znacznik czasowy.
+### Puls
+W każdym wierszu była zarejestrowana przez pulsomierz wartość tętna oraz odpowiadający
+jej znacznik czasowy.
+### Ścieżka wzrokowa
+Nagrania ścieżki wzrokowej były importowane z programu Tobii Pro Lab w pliku TSV.
+Tabela miała 102 kolumny. Zawierały one kompleksowe informacje dotyczące eksperymentu
+(np. znaczniki czasowe, nazwa sensora, czas rozpoczęcia eksperymentu), uczestnika
+(np. nazwa, płeć, wiek), wyświetlanego obrazu (np. nazwa, rozdzielczość), wyników kalibracji,
+ścieżki wzrokowej, wielkości źrenicy oraz stopnia otwarcia oka badanego.
+
+## Przygotowanie danych do uczenia sieci
 
 
-## Obróbka danych
 
 ## Architektura sieci
 
