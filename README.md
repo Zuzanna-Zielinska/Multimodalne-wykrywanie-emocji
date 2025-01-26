@@ -60,7 +60,7 @@ ludzie, twarze, krajobrazy, zwierzęta, przedmioty. Dodatkowo spośród wszystki
 wybrano 510 i zbadano jakie, z sześciu podstawowych, wywołują emocje.
 
 <p align="center">
-<img src=".\images\diagramy-stanowisko pomiarowe.drawio.png" alt="NAPS">
+<img src=".\images\NAPS.png" alt="NAPS">
 </p>
 
 Spośród ww. 510 zdjęć zostały wybrane dwa zestawy obrazów o najbardziej
@@ -86,8 +86,32 @@ Tabela miała 102 kolumny. Zawierały one kompleksowe informacje dotyczące eksp
 ścieżki wzrokowej, wielkości źrenicy oraz stopnia otwarcia oka badanego.
 
 ## Przygotowanie danych do uczenia sieci
+Przygotowanie danych składało się z następujących kroków:
 
+• Odrzucenie nieistotnych danych.
 
+• Sprawdzenie, czy każda próbka ma wszystkie modalności.
+
+• Ekstrakcja punktów charakterystycznych mimiki.
+
+• Synchronizacja danych.
+
+• Wypełnienie pustych kolumn zerami.
+
+• Zakodowanie słów.
+
+• Normalizacja danych.
+
+Żeby klatkę filmu z mimiką zamienić na wektor punktów charakterystycznych najpierw wykonano detekcję twarzy za pomocą algorytmu HOG (Histogram of gradients) i wytrenowanego klasyfikatora SVM.
+Później ekstrakcję wykonano za pomocą algorytmu Kazemiego-Sullivan.
+
+<p align="center">
+<img src=".\images\punkty.png" alt="punkty">
+</p>
+
+<p align="center">
+<img src=".\images\projekt rozłożony na części2.png" alt="a1">
+</p>
 
 ## Architektura sieci
 
