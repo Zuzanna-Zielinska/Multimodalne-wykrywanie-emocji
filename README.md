@@ -109,10 +109,133 @@ Później ekstrakcję wykonano za pomocą algorytmu Kazemiego-Sullivan.
 <img src=".\images\punkty.png" alt="punkty">
 </p>
 
+## Architektura sieci
+Celem sieci jest podanie wartości ankiety SAM na podstawie tabeli z nagraniami
+wyrażającymi emocje. Wartościami wejściowymi są tabele etykiet oraz tabele
+danych o 208 kolumnach i różnej liczbie wierszy. Wynika to z tego, że badany
+sam decydował, kiedy przejść z obrazka wywołującego emocje do odpowiadania na ankietę.
+Dane zostały podzielone na zbiór treningowy (258 próbek), testowy (54 próbek)
+oraz walidacyjny (45 próbek).
+
 <p align="center">
 <img src=".\images\projekt rozłożony na części2.png" alt="a1">
 </p>
 
-## Architektura sieci
+Ustawiono rozmiar paczki danych (ang. batch size) na 1 przez różną długość tablic
+wejściowych oraz sposób napisania biblioteki tensorflow.
+
+Każda tablica miała różną liczbę wierszy. Żeby to skompensować, użyto ważonych metryk
+podczas treningu. Waga była odwrotnie proporcjonalna do długości tablicy.
+
+Wartościami wyjściowymi sieci są 3 parametry od 1 do 9. Ten problem można potraktować
+na dwa sposoby. Wartościowość, pobudzenie i dominacja przyjmują dyskretne wartości,
+dlatego można stworzyć sieć do klasyfikacji. Z drugiej strony każda z tych wartości
+reprezentuje punkt na skali, do przewidywania czego odpowiednia jest regresja. Dodatkowo
+jedna sieć może przewidywać wszystkie 3 wartości lub można stworzyć 3 sieci przewidujące
+tylko jeden parametr. Biorąc to pod uwagę wytrenowano 20 architektur sieci regresyjnej, które
+przewidywały trzy wartości oraz 20 architektur trzech sieci klasyfikujących które
+przewidywały jedną wartość. Dla uproszczenia uczenia i testowania sieci, te ostatnie były
+połączone jednym wejściem, które rozgałęziało się w trzy sekwencje takich samych warstw,
+które nie były później ze sobą połączone.
+
+<p align="center">
+<img src=".\images\architektura1.png" alt="arch1">
+</p>
+
+<p align="center">
+<img src=".\images\architektura2.png" alt="arch2">
+</p>
+
+Modele regresyjne były skompilowane z parametrami:
+
+• optymalizator – Adam,
+
+• współczynnik uczenia – 8*10-7,
+
+• funkcja kosztu – błąd średnio-kwadratowy,
+
+• ważona metryka – błąd średnio-kwadratowy.
+
+Modele klasyfikujące były skompilowane z parametrami:
+
+• optymalizator – Adam,
+
+• współczynnik uczenia – 8*10-7,
+
+• funkcja kosztu – rzadka kategoryczna entropia krzyżowa,
+
+• ważona metryka – dokładność.
+
+Oba typy modeli miały na początku warstwę wejściową. Modele regresyjne były
+zakończone warstwą w pełni połączoną, zawierającą trzy neurony i sigmoidalną funkcję
+aktywacji oraz warstwę skalującą, która przekształca dane z przedziału <0, 1> do <1, 9>. Wynikiem tych sieci były bezpośrednio wyniki ankiety SAM. Ostatnią
+warstwą modeli klasyfikujących były trzy warstwy w pełni połączone zawierające dziewięć
+neuronów i sigmoidalną funkcję aktywacji. Warstwa ta dawała
+prawdopodobieństwo, że dane należą do jednej z klas. Jako odpowiedź sieci była
+traktowana klasa z największym prawdopodobieństwem wystąpienia.
+
+Środkowe warstwy różniły się między modelami. Składały się z przynajmniej
+jednej warstwy LSTM oraz potencjalnie z różnych kombinacji kolejnych warstw LSTM,
+warstwy dropout, która porzuca 0,2 połączeń między jej wejściem a wyjściem, warstwy
+konwolucyjnej z jądrem o wielkości 5 oraz warstwy dense – kolejnej warstwy w pełni
+połączonej, której funkcją aktywacji jest tangens hiperboliczny. Parametry wszystkich warstw
+przedstawia tabela poniżej.
+
+| Nazwa   | Architektura                                   |
+|---------|-----------------------------------------------|
+| model1  | lstm                                          |
+| model2  | lstm, dense, dense                            |
+| model3  | dense, dense, lstm                            |
+| model4  | dense, dense, lstm, dense, dense              |
+| model5  | dense, dense, lstm, dense, dropout, dense     |
+| model6  | conv, lstm                                    |
+| model7  | conv, conv, lstm                              |
+| model8  | conv, dense, conv, lstm                       |
+| model9  | conv, dense, conv, dropout, lstm             |
+| model10 | conv, lstm, dense, dense                      |
+| model11 | conv, conv, lstm, dense, dense                |
+| model12 | lstm, lstm                                    |
+| model13 | lstm, lstm, dense, dense                      |
+| model14 | dense, dense, lstm, lstm                      |
+| model15 | dense, dense, lstm, lstm, dense, dense        |
+| model16 | dense, dense, lstm, lstm, dense, dropout, dense |
+| model17 | dense, dense, lstm, dense, lstm, dense, dense |
+| model18 | dense, dense, lstm, dense, lstm, dense, dropout, dense |
+| model19 | conv, lstm, lstm                              |
+| model20 | lstm, lstm, lstm                              |
+
+
+Celem warstwy LSTM jest skumulowanie predykcji dla całej tabeli danych w jeden wektor
+cech. Jeśli sieć zawierała więcej niż jedną warstwę LSTM, to zamiast tego poprzednie warstwy
+przekazywały dalej swoje predykcje dla każdego wiersza tabeli.
+
+Parametr wielkości w bibliotece tensorflow dla warstwy wejściowej i środkowych przed
+i włącznie z ostatnią warstwą LSTM wynosił (1, None, 208). Po niej rozmiar warstw
+środkowych wynosił (1, 208). Wyjściowe warstwy dla regresji miały wielkość (1, 3)
+a dla klasyfikacji (1, 9). Wartość None oznacza różną dla każdej próbki liczbę wierszy tabeli.
+Dodatkowo długość tabeli etykiet musi odpowiadać długości tabeli wejściowej, dlatego
+przy wczytywaniu danych powielano jej wiersze.
+
+Każdy model trenowano dla 50 epok. Po każdej z nich były wywoływane dwie funkcje. Jeśli
+wyniki sieci dla zbioru walidacyjnego były lepsze od poprzednich według odpowiadającej
+metryki, to wagi sieci były zapisywane. Metryką dla modeli regresyjnych był błąd średniokwadratowy
+a dla klasyfikacji wartość funkcji kosztu. Jeśli wyniki dla zbioru walidacyjnego
+nie poprawiły się od 3 iteracji, uczenie sieci było przedwcześnie przerywane. Uczenie każdego
+modelu było powtarzane 5 razy i zapisywany był ten, z najlepszymi wynikami.
+
+Dodatkowo te same architektury wytrenowano dla 50 epok, ale bez funkcji wcześniejszego
+przerywania uczenia. Uczenie jednego modelu wykonywano tylko raz.
+
+| Warstwa                 | Liczba parametrów sieci |
+|-------------------------|-------------------------|
+| Input                   | 0                       |
+| LSTM                    | 346,944                 |
+| Dense (1, None, 208)    | 43,472                  |
+| Dense (1, 208)          | 43,472                  |
+| Dense (1, 9)            | 1,881                   |
+| Dense (1, 3)            | 627                     |
+| Dropout                 | 0                       |
+| Conv                    | 216,528                 |
+| Rescale                 | 0                       |
 
 ## Pliki
