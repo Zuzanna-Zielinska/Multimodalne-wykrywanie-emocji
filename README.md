@@ -3,7 +3,8 @@ Repozytorium zawiera skrypty służące do wykonania pracy magisterskiej, które
 było przeprowadzenie badania zbierającego dane biometryczne uczestników
 podczas odczuwania emocji oraz analiza wypełnionych przez nich ankiet dotyczących
 przeżywanych uczuć i na tej podstawie zaprojektowanie i wykonanie prototypu systemu
-wykrywania emocji.
+wykrywania emocji. [Pełny tekst pracy znajduje się tutaj.](https://github.com/Zuzanna-Zielinska/Multimodalne-wykrywanie-emocji/blob/main/Multimodalne%20wykrywanie%20emodji.pdf)
+
 
 ## Badanie
 Jednym z kluczowych problemów w badaniach nad emocjami jest tzw. reaktywność, czyli
