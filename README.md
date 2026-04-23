@@ -13,7 +13,7 @@ During the study, eye movement, facial expressions and heart rate were recorded 
 <img src=".\images\diagramy-stanowisko pomiarowe.drawio.png" alt="test-bench">
 </p>
 
-# Questionnaire
+### Questionnaire
 In the questionnaire, participants were asked to describe their emotions verbally and complete the SAM questionnaire.
 The SAM questionnaire (Self-Assessment Manikin) is based on the assumption that emotions can be described using three nine-point scales:
 
@@ -30,90 +30,63 @@ The SAM questionnaire (Self-Assessment Manikin) is based on the assumption that 
 <img src=".\images\dominacja.JPG" alt="dominacja">
 </p>
 
-## Baza obrazów
-W badaniu została użyta baza NAPS (ang. Nencki Affective Picture System). Jest to baza danych składająca się z 1356 obrazów wywołujących emocje oraz ich średnie
-wyniki wartościowości, pobudzenia i dominacji. Każdy obraz jest podzielony na 5 kategorii:
-ludzie, twarze, krajobrazy, zwierzęta, przedmioty. Dodatkowo spośród wszystkich zdjęć
-wybrano 510 i zbadano jakie, z sześciu podstawowych, wywołują emocje.
+### Image Database
+The study used the NAPS database (Nencki Affective Picture System). It consists of 1,356 images that evoke emotions, along with their average ratings for pleasure, arousal, and dominance. Each image is categorized into one of five groups: people, faces, landscapes, animals, and objects. Additionally, 510 images were already selected and analysed to determine which of the six basic emotions they evoke.
 
 <p align="center">
 <img src=".\images\NAPS.png" alt="NAPS">
 </p>
 
-Spośród ww. 510 zdjęć zostały wybrane dwa zestawy obrazów o najbardziej
-zróżnicowanych wynikach według ankiety SAM. Pierwszy zawiera 20 obrazów,
-drugi 30. W mniejszym ułożono zdjęcia pod względem wartościowości
-w kolejności rosnącej i wybrano 5 obrazów równooddalonych od siebie. Powtórzono czynność
-dla pobudzenia i dominacji. Pozostałe obrazy dobrano tak, aby w zestawie znajdowały się
-obrazy wywołujące każdą z sześciu podstawowych emocji. Większy zbiór został wybrany
-analogicznie, tylko zamiast dla 5, to dla 7 równooddalonych od siebie obrazów.
+From these 510 images, two sets were selected based on the most diverse SAM ratings. The first set contains 20 images, and the second contains 30.
+In the smaller set, images were sorted by valence in ascending order, and 5 evenly spaced images were selected. The same process was repeated for arousal and dominance. The remaining images were chosen to ensure that all six basic emotions were represented.
+The larger set was selected analogously, except that 7 evenly spaced images were chosen instead of 5.
 
-## Format surowych danych
-### Mimika
-Każdemu filmowi z nagraniem mimiki była przyporządkowana tabela w pliku CSV, która
-w każdym wierszu zapisywała numer klatki i odpowiadający jej znacznik czasowy.
-### Puls
-W każdym wierszu była zarejestrowana przez pulsomierz wartość tętna oraz odpowiadający
-jej znacznik czasowy.
-### Ścieżka wzrokowa
-Nagrania ścieżki wzrokowej były importowane z programu Tobii Pro Lab w pliku TSV.
-Tabela miała 102 kolumny. Zawierały one kompleksowe informacje dotyczące eksperymentu
-(np. znaczniki czasowe, nazwa sensora, czas rozpoczęcia eksperymentu), uczestnika
-(np. nazwa, płeć, wiek), wyświetlanego obrazu (np. nazwa, rozdzielczość), wyników kalibracji,
-ścieżki wzrokowej, wielkości źrenicy oraz stopnia otwarcia oka badanego.
 
-## Przygotowanie danych do uczenia sieci
-Przygotowanie danych składało się z następujących kroków:
+## Raw Data Format
+### Facial expressions
+Each video recording of facial expressions had an associated CSV file containing a table where each row stored the frame number and its corresponding timestamp.
 
-• Odrzucenie nieistotnych danych.
+### Heart rate
+Each row contained a heart rate value recorded by the monitor and its corresponding timestamp.
 
-• Sprawdzenie, czy każda próbka ma wszystkie modalności.
+### Eye tracking
+Eye-tracking recordings were imported from Tobii Pro Lab in TSV format. The table had 102 columns, including detailed information about:
 
-• Ekstrakcja punktów charakterystycznych mimiki.
+•	the experiment (e.g., timestamps, sensor name, experiment start time),
+•	the participant (e.g., name, gender, age),
+•	the displayed image (e.g., name, resolution),
+•	calibration results,
+•	eye movement,
+•	pupil size,
+•	eye openness.
 
-• Synchronizacja danych.
+## Data Preparation for Training
+Data preparation consisted of the following steps:
+•	removing irrelevant data,
+•	checking whether each sample contains all modalities,
+•	extracting facial landmark points,
+•	synchronizing data,
+•	filling missing values with zeros,
+•	encoding words,
+•	normalizing data.
 
-• Wypełnienie pustych kolumn zerami.
+To convert a frame of facial expression video into a feature vector, face detection was first performed using the HOG (Histogram of Gradients) algorithm and a trained SVM classifier. Then, feature extraction was carried out using the Kazemi-Sullivan algorithm.
 
-• Zakodowanie słów.
-
-• Normalizacja danych.
-
-Żeby klatkę filmu z mimiką zamienić na wektor punktów charakterystycznych najpierw wykonano detekcję twarzy za pomocą algorytmu HOG (Histogram of gradients) i wytrenowanego klasyfikatora SVM.
-Później ekstrakcję wykonano za pomocą algorytmu Kazemiego-Sullivan.
 
 <p align="center">
 <img src=".\images\punkty.png" alt="punkty">
 </p>
 
-## Architektura sieci
-Celem sieci jest podanie wartości ankiety SAM na podstawie tabeli z nagraniami
-wyrażającymi emocje. Wartościami wejściowymi są tabele etykiet oraz tabele
-danych o 208 kolumnach i różnej liczbie wierszy. Wynika to z tego, że badany
-sam decydował, kiedy przejść z obrazka wywołującego emocje do odpowiadania na ankietę.
-Dane zostały podzielone na zbiór treningowy (258 próbek), testowy (54 próbek)
-oraz walidacyjny (45 próbek).
+## Network Architecture
+The goal of the network is to predict SAM questionnaire values based on tables of recorded emotional expressions. Inputs consist of label tables and data tables with 208 columns and varying numbers of rows. This variability arises because participants decided themselves when to move from viewing an image to answering the questionnaire. The dataset was split into: training set (258 samples), test set (54 samples), validation set (45 samples).
 
 <p align="center">
 <img src=".\images\projekt rozłożony na części2.png" alt="a1">
 </p>
 
-Ustawiono rozmiar paczki danych (ang. batch size) na 1 przez różną długość tablic
-wejściowych oraz sposób napisania biblioteki tensorflow.
-
-Każda tablica miała różną liczbę wierszy. Żeby to skompensować, użyto ważonych metryk
-podczas treningu. Waga była odwrotnie proporcjonalna do długości tablicy.
-
-Wartościami wyjściowymi sieci są 3 parametry od 1 do 9. Ten problem można potraktować
-na dwa sposoby. Wartościowość, pobudzenie i dominacja przyjmują dyskretne wartości,
-dlatego można stworzyć sieć do klasyfikacji. Z drugiej strony każda z tych wartości
-reprezentuje punkt na skali, do przewidywania czego odpowiednia jest regresja. Dodatkowo
-jedna sieć może przewidywać wszystkie 3 wartości lub można stworzyć 3 sieci przewidujące
-tylko jeden parametr. Biorąc to pod uwagę wytrenowano 20 architektur sieci regresyjnej, które
-przewidywały trzy wartości oraz 20 architektur trzech sieci klasyfikujących które
-przewidywały jedną wartość. Dla uproszczenia uczenia i testowania sieci, te ostatnie były
-połączone jednym wejściem, które rozgałęziało się w trzy sekwencje takich samych warstw,
-które nie były później ze sobą połączone.
+The batch size was set to 1 due to varying input lengths and the implementation of the TensorFlow library.
+Each input table had a different number of rows. To compensate for this, weighted metrics were used during training, with weights inversely proportional to the table length.
+The network outputs three values ranging from 1 to 9. This problem can be approached in two ways: as classification, since the values are discrete, as regression, since each value represents a point on a scale. Additionally, one network can predict all three values, or three separate networks can predict each value independently. Based on this, 20 regression architectures predicting all three values and 20 classification architectures (three networks each predicting one value) were trained. For simplicity, the classification models shared a single input that branched into three separate sequences of identical layers.
 
 <p align="center">
 <img src=".\images\architektura1.png" alt="arch1">
@@ -123,42 +96,23 @@ które nie były później ze sobą połączone.
 <img src=".\images\architektura2.png" alt="arch2">
 </p>
 
-Modele regresyjne były skompilowane z parametrami:
+Regression models were trained with following parameters:
+•	optimizer: Adam,
+•	learning rate: 8×10⁻⁷,
+•	loss function: mean squared error,
+•	weighted metric: mean squared error.
+Classification models were trained with following parameters:
+•	optimizer: Adam,
+•	learning rate: 8×10⁻⁷,
+•	loss function: sparse categorical cross-entropy,
+•	weighted metric: accuracy.
 
-• optymalizator – Adam,
+Both types of models started with an input layer. Regression models ended with a fully connected layer with three neurons and sigmoid activation and scaling layer mapping values from (0,1) to (1,9). Their outputs directly corresponded to SAM scores.
+Classification models ended with three fully connected layers with nine neurons and sigmoid activation, producing class probabilities. The predicted class was the one with the highest probability.
+Hidden layers varied between models and included at least one LSTM layer and optional combinations of additional LSTM layers, dropout layers (dropping 20% of connections), convolutional layers (kernel size 5), dense layers with hyperbolic tangent activation.
 
-• współczynnik uczenia – 8*10-7,
 
-• funkcja kosztu – błąd średnio-kwadratowy,
-
-• ważona metryka – błąd średnio-kwadratowy.
-
-Modele klasyfikujące były skompilowane z parametrami:
-
-• optymalizator – Adam,
-
-• współczynnik uczenia – 8*10-7,
-
-• funkcja kosztu – rzadka kategoryczna entropia krzyżowa,
-
-• ważona metryka – dokładność.
-
-Oba typy modeli miały na początku warstwę wejściową. Modele regresyjne były
-zakończone warstwą w pełni połączoną, zawierającą trzy neurony i sigmoidalną funkcję
-aktywacji oraz warstwę skalującą, która przekształca dane z przedziału <0, 1> do <1, 9>. Wynikiem tych sieci były bezpośrednio wyniki ankiety SAM. Ostatnią
-warstwą modeli klasyfikujących były trzy warstwy w pełni połączone zawierające dziewięć
-neuronów i sigmoidalną funkcję aktywacji. Warstwa ta dawała
-prawdopodobieństwo, że dane należą do jednej z klas. Jako odpowiedź sieci była
-traktowana klasa z największym prawdopodobieństwem wystąpienia.
-
-Środkowe warstwy różniły się między modelami. Składały się z przynajmniej
-jednej warstwy LSTM oraz potencjalnie z różnych kombinacji kolejnych warstw LSTM,
-warstwy dropout, która porzuca 0,2 połączeń między jej wejściem a wyjściem, warstwy
-konwolucyjnej z jądrem o wielkości 5 oraz warstwy dense – kolejnej warstwy w pełni
-połączonej, której funkcją aktywacji jest tangens hiperboliczny. Parametry wszystkich warstw
-przedstawia tabela poniżej.
-
-| Nazwa   | Architektura                                   |
+| Name   | Architecture                                   |
 |---------|-----------------------------------------------|
 | model1  | lstm                                          |
 | model2  | lstm, dense, dense                            |
@@ -182,37 +136,5 @@ przedstawia tabela poniżej.
 | model20 | lstm, lstm, lstm                              |
 
 
-Celem warstwy LSTM jest skumulowanie predykcji dla całej tabeli danych w jeden wektor
-cech. Jeśli sieć zawierała więcej niż jedną warstwę LSTM, to zamiast tego poprzednie warstwy
-przekazywały dalej swoje predykcje dla każdego wiersza tabeli.
-
-Parametr wielkości w bibliotece tensorflow dla warstwy wejściowej i środkowych przed
-i włącznie z ostatnią warstwą LSTM wynosił (1, None, 208). Po niej rozmiar warstw
-środkowych wynosił (1, 208). Wyjściowe warstwy dla regresji miały wielkość (1, 3)
-a dla klasyfikacji (1, 9). Wartość None oznacza różną dla każdej próbki liczbę wierszy tabeli.
-Dodatkowo długość tabeli etykiet musi odpowiadać długości tabeli wejściowej, dlatego
-przy wczytywaniu danych powielano jej wiersze.
-
-Każdy model trenowano dla 50 epok. Po każdej z nich były wywoływane dwie funkcje. Jeśli
-wyniki sieci dla zbioru walidacyjnego były lepsze od poprzednich według odpowiadającej
-metryki, to wagi sieci były zapisywane. Metryką dla modeli regresyjnych był błąd średniokwadratowy
-a dla klasyfikacji wartość funkcji kosztu. Jeśli wyniki dla zbioru walidacyjnego
-nie poprawiły się od 3 iteracji, uczenie sieci było przedwcześnie przerywane. Uczenie każdego
-modelu było powtarzane 5 razy i zapisywany był ten, z najlepszymi wynikami.
-
-Dodatkowo te same architektury wytrenowano dla 50 epok, ale bez funkcji wcześniejszego
-przerywania uczenia. Uczenie jednego modelu wykonywano tylko raz.
-
-| Warstwa                 | Liczba parametrów sieci |
-|-------------------------|-------------------------|
-| Input                   | 0                       |
-| LSTM                    | 346,944                 |
-| Dense (1, None, 208)    | 43,472                  |
-| Dense (1, 208)          | 43,472                  |
-| Dense (1, 9)            | 1,881                   |
-| Dense (1, 3)            | 627                     |
-| Dropout                 | 0                       |
-| Conv                    | 216,528                 |
-| Rescale                 | 0                       |
-
-## Pliki
+The LSTM layer aggregates predictions across the entire data table into a single feature vector. If multiple LSTM layers were used, earlier layers passed predictions for each row forward.
+Each model was trained for 50 epochs. After each epoch: if validation performance improved, weights were saved, if no improvement occurred for 3 epochs, training was stopped early. Training for each model was repeated 5 times, and the best-performing version was saved.Additionally, all architectures were trained once for 50 epochs without early stopping.
