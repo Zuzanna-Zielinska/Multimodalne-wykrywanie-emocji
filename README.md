@@ -137,4 +137,4 @@ Hidden layers varied between models and included at least one LSTM layer and opt
 
 
 The LSTM layer aggregates predictions across the entire data table into a single feature vector. If multiple LSTM layers were used, earlier layers passed predictions for each row forward.
-Each model was trained for 50 epochs. After each epoch: if validation performance improved, weights were saved, if no improvement occurred for 3 epochs, training was stopped early. Training for each model was repeated 5 times, and the best-performing version was saved.Additionally, all architectures were trained once for 50 epochs without early stopping.
+Each model was trained for 50 epochs. After each epoch: if validation performance improved, weights were saved, if no improvement occurred for 3 epochs, training was stopped early. Training for each model was repeated 5 times, and the best-performing version was saved. Additionally, all architectures were trained once for 50 epochs without early stopping.
