@@ -1,12 +1,12 @@
-# Multimodalne-wykrywanie-emocji
-Repozytorium zawiera skrypty służące do wykonania pracy magisterskiej, której celem
-było przeprowadzenie badania zbierającego dane biometryczne uczestników
-podczas odczuwania emocji oraz analiza wypełnionych przez nich ankiet dotyczących
-przeżywanych uczuć i na tej podstawie zaprojektowanie i wykonanie prototypu systemu
-wykrywania emocji. [Pełny tekst pracy znajduje się tutaj.](https://github.com/Zuzanna-Zielinska/Multimodalne-wykrywanie-emocji/blob/main/Multimodalne%20wykrywanie%20emodji.pdf)
+# Multimodal emotion detection
+The repository contains a description of my master’s thesis, the result of which is a recurrent neural network for emotion detection. The work involved designing and conducting a study that collected recordings of emotional reactions to stimuli using an eye tracker, camera, and heart rate monitor; processing raw data into training datasets; designing and training neural networks. [The full thesis text is available here.](https://github.com/Zuzanna-Zielinska/Multimodalne-wykrywanie-emocji/blob/main/Multimodalne%20wykrywanie%20emodji.pdf)
+
+Study
+During the study, eye movement, facial expressions and heart rate were recorded while participants viewed images from the NAPS database. After each image, participants reported their emotions in a questionnaire.
 
 
-## Badanie
+
+## Study
 Jednym z kluczowych problemów w badaniach nad emocjami jest tzw. reaktywność, czyli
 zmiana zachowania osoby badanej na skutek świadomości bycia obserwowaną. Żeby zaradzić temu problemowi została zrobiona triangulacja danych, czyli korzystanie z wielu źródeł informacji.
 W badaniu zostały nagrane 3 modalności – ścieżka wzrokowa, mimika i puls. Dodatkowo
